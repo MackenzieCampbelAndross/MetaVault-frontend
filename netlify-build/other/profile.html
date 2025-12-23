@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile | MetaVault</title>
+  <link rel="stylesheet" href="./css/profile.css" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <!-- Back -->
+  <div class="back-btn" onclick="window.location.href='dashboard.html'">
+    back
+  </div>
+
+  <h1 class="title">Profile</h1>
+
+  <div class="profile-container">
+
+    <label>Name:</label>
+    <input id="nameField" type="text" placeholder="Enter your name" />
+
+    <label>Email:</label>
+    <input id="emailField" type="text" disabled />
+
+    <label>Wallet Address:</label>
+    <div class="wallet-row">
+      <input id="walletField" type="text" disabled />
+      <button class="copy-btn" onclick="copyWallet()">Copy</button>
+    </div>
+
+    <div class="button-row">
+      <button class="save-btn" onclick="saveProfile()">Save</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+<script>
+  // Load existing details
+  document.getElementById("emailField").value = localStorage.getItem("magic_user") 
+      || localStorage.getItem("metamask_address") 
+      || "Unknown User";
+
+  document.getElementById("walletField").value = localStorage.getItem("metamask_address") || "Not Connected";
+
+  if(localStorage.getItem("profile_name")){
+    document.getElementById("nameField").value = localStorage.getItem("profile_name");
+  }
+
+  function saveProfile(){
+    const name = document.getElementById("nameField").value.trim();
+    localStorage.setItem("profile_name", name);
+
+    const btn = document.querySelector(".save-btn");
+    btn.innerText = "Saved!";
+    btn.style.transform = "scale(0.95)";
+    setTimeout(() => {
+      btn.innerText = "Save";
+      btn.style.transform = "scale(1)";
+    }, 800);
+  }
+
+  function copyWallet(){
+    const wallet = document.getElementById("walletField").value;
+    navigator.clipboard.writeText(wallet);
+
+    const btn = document.querySelector(".copy-btn");
+    btn.innerText = "Copied!";
+    setTimeout(() => (btn.innerText = "Copy"), 800);
+  }
+
+  function logout(){
+    localStorage.clear();
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>

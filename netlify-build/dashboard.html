@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | MetaVault</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'bg-light': '#FEFCF5',
+            'bg-dark': '#F4F1E8',
+            'text-primary': '#111111',
+            'accent': '#FF5500',
+            'card-bg': '#1A1A1A',
+          },
+          fontFamily: {
+            'main': ['Geist', 'Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
+    @layer base {
+      body {
+        font-family: 'Geist', 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-bg-light text-text-primary min-h-screen">
+
+  <!-- AUTH GUARD -->
+  <script>
+    if (!localStorage.getItem("auth_method")) {
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <!-- HEADER (same style as upload page) -->
+  <header class="w-full px-10 py-8">
+    <div class="max-w-[1440px] mx-auto flex justify-between items-center">
+      <a href="index.html" class="text-3xl font-medium tracking-tight">MetaVault</a>
+      <nav class="flex gap-8 text-sm">
+        <a href="dashboard.html" class="text-accent">Dashboard</a>
+        <a href="upload.html" class="hover:text-accent">Upload</a>
+        <a href="login.html" class="hover:text-accent">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="w-full px-10 py-16">
+    <div class="max-w-[1440px] mx-auto">
+
+      <!-- TOP ACTION BAR -->
+      <div class="flex justify-between items-center mb-12">
+        <h1 class="text-[4rem] font-normal tracking-[-0.03em]">
+          Dashboard
+        </h1>
+
+        <!-- THIS IS THE BUTTON YOU ASKED ABOUT -->
+        <a href="upload.html"
+          class="bg-accent text-white px-8 py-4 rounded-full font-medium text-lg transition hover:opacity-90">
+          Upload Document
+        </a>
+      </div>
+
+      <!-- HISTORY CARD -->
+      <div id="historyContainer"
+        class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+      </div>
+
+    </div>
+  </main>
+
+  <!-- HISTORY LOGIC (READ-ONLY) -->
+  <script>
+    const container = document.getElementById("historyContainer");
+    const history = JSON.parse(localStorage.getItem("tx_history") || "[]");
+
+    if (history.length === 0) {
+      container.innerHTML = `
+        <div class="p-10 text-gray-500">
+          No documents uploaded yet.
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <table class="w-full text-sm">
+          <thead class="border-b bg-bg-dark">
+            <tr>
+              <th class="text-left p-4 font-medium">CID</th>
+              <th class="text-left p-4 font-medium">Transaction</th>
+              <th class="text-left p-4 font-medium">Uploaded At</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${history.map(item => `
+              <tr class="border-b hover:bg-bg-dark/40 transition">
+                <td class="p-4 font-mono">
+                  ${item.cid.slice(0, 12)}...
+                </td>
+                <td class="p-4">
+                  <a href="https://sepolia.etherscan.io/tx/${item.txHash}"
+                     target="_blank"
+                     class="text-accent underline">
+                    View on Etherscan
+                  </a>
+                </td>
+                <td class="p-4">
+                  ${new Date(item.time).toLocaleString()}
+                </td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+  </script>
+
+</body>
+</html>
